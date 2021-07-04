@@ -3,10 +3,15 @@ package life;
 public class Cell {
     private byte neighbors;
     private boolean alive;
-    public static final int NEIGHBORS = 8;
+
+    public Cell() {
+        this.alive = false;
+        this.neighbors = 0;
+    }
 
     public Cell(boolean alive) {
         this.alive = alive;
+        this.neighbors = 0;
     }
 
     public boolean isAlive() {
@@ -21,16 +26,8 @@ public class Cell {
         return neighbors;
     }
 
-    public void addNeighbor(Cell neighbor) {
-        if (neighbor.isAlive()) {
-            neighbors++;
-        }
-
+    public void addNeighbor() {
+        neighbors++;
     }
 
-    public void removeNeighbor() {
-        if (neighbors >= 1) {
-            neighbors--;
-        }
-    }
 }

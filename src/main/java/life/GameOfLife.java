@@ -8,13 +8,14 @@ public class GameOfLife {
         final Scanner scanner = new Scanner(System.in);
         final int n = scanner.nextInt();
         final long seed = scanner.nextLong();
-        int m = scanner.nextInt() + 1;
+        int m = scanner.nextInt();
         final Grid game = new Grid(n, seed);
         game.buildGrid();
-        for (int i = 0; i < m; i++ ) {
+        for (int i = 0; i <= m; i++) {
             game.displayGrid();
             game.nextGeneration();
         }
-        game.displayGrid();
+
+
     }
 }
