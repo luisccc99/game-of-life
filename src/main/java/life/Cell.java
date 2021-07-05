@@ -4,11 +4,6 @@ public class Cell {
     private byte neighbors;
     private boolean alive;
 
-    public Cell() {
-        this.alive = false;
-        this.neighbors = 0;
-    }
-
     public Cell(boolean alive) {
         this.alive = alive;
         this.neighbors = 0;

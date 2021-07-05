@@ -13,7 +13,7 @@ public class GameOfLifeTest {
     void initialize10AliveCellsWithSeedOf4() {
         Grid life = new Grid(4, 4);
         life.buildGrid();
-        assertEquals(10, life.getNumberOfCellsAlive());
+        assertEquals(10, life.getLiveCells());
     }
 
     @Test

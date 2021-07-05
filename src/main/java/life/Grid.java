@@ -1,13 +1,15 @@
 package life;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Grid {
 
-    private final Cell[][] prev;
+    private Cell[][] prev;
     private Cell[][] current;
     private final Random random;
     private final int N;
+    private int liveCells;
 
     public Grid(int n, long seed) {
         if (n <= 0) {
@@ -17,6 +19,7 @@ public class Grid {
         current = new Cell[n][n];
         prev = new Cell[n][n];
         random = new Random(seed);
+        liveCells = 0;
     }
 
     public void buildGrid() {
@@ -29,14 +32,16 @@ public class Grid {
     }
 
     public void nextGeneration() {
-        System.arraycopy(current, 0, prev, 0, N);
+        prev = Arrays.copyOf(current, N);
         current = new Cell[N][N];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 checkNeighbors(i, j);
                 int numberOfNeighbors = prev[i][j].getNeighbors();
                 boolean alive = false;
-                if (numberOfNeighbors == 3 || (prev[i][j].isAlive() && numberOfNeighbors == 2)) {
+                if (numberOfNeighbors == 3) {
+                    alive = true;
+                } else if (prev[i][j].isAlive() && numberOfNeighbors == 2) {
                     alive = true;
                 }
                 current[i][j] = new Cell(alive);
@@ -54,7 +59,7 @@ public class Grid {
             addNeighborIfIsAlive(cell, row, col + 1); // E
             addNeighborIfIsAlive(cell, row + 1, col + 1); // SE
             addNeighborIfIsAlive(cell, row + 1, col); // S
-            addNeighborIfIsAlive(cell, row, N - 1); // SW
+            addNeighborIfIsAlive(cell, row + 1, N - 1); // SW
         } else if (isTopRightCorner(row, col)) {
             addNeighborIfIsAlive(cell, row, col - 1); // W
             addNeighborIfIsAlive(cell, N - 1, col - 1); // NW
@@ -115,7 +120,7 @@ public class Grid {
             addNeighborIfIsAlive(cell, row - 1, col); // N
             addNeighborIfIsAlive(cell, row - 1, col + 1); // NE
             addNeighborIfIsAlive(cell, row, col + 1); // E
-            addNeighborIfIsAlive(cell, 0,col + 1); // SE
+            addNeighborIfIsAlive(cell, 0, col + 1); // SE
             addNeighborIfIsAlive(cell, 0, col); // S
             addNeighborIfIsAlive(cell, 0, col - 1); // SW
         } else {
@@ -176,11 +181,20 @@ public class Grid {
     public void displayGrid() {
         for (Cell[] row : current) {
             for (Cell cell : row) {
-                System.out.print(cell.isAlive() ? "O" : "X");
+                System.out.print(cell.isAlive() ? "O" : " ");
             }
             System.out.println();
         }
         System.out.println();
     }
 
+    public int getLiveCells() {
+        liveCells = 0;
+        for (Cell[] row : current) {
+            for (Cell cell : row) {
+                liveCells += cell.isAlive() ? 1 : 0;
+            }
+        }
+        return liveCells;
+    }
 }
