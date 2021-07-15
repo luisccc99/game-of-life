@@ -8,18 +8,14 @@ public class Grid {
     private Cell[][] prev;
     private Cell[][] current;
     private final Random random;
-    private final int N;
-    private int liveCells;
+    public static final int N = 20;
+    private int liveCells = 0;
+    private int generation = 1;
 
-    public Grid(int n, long seed) {
-        if (n <= 0) {
-            throw new IllegalArgumentException("n should be greater than 0");
-        }
-        N = n;
-        current = new Cell[n][n];
-        prev = new Cell[n][n];
-        random = new Random(seed);
-        liveCells = 0;
+    public Grid() {
+        random = new Random(System.currentTimeMillis());
+        current = new Cell[N][N];
+        prev = new Cell[N][N];
     }
 
     public void buildGrid() {
@@ -135,10 +131,6 @@ public class Grid {
         }
     }
 
-    private void checkClockwise(String from, String to) {
-        // check neighbors clockwise in a range first W and last SW
-    }
-
     private void addNeighborIfIsAlive(Cell cell, int row, int col) {
         Cell neighbor = prev[row][col];
         if (neighbor.isAlive()) {
@@ -196,5 +188,13 @@ public class Grid {
             }
         }
         return liveCells;
+    }
+
+    public int getGeneration() {
+        return generation;
+    }
+
+    public Cell[][] getCurrent() {
+        return current;
     }
 }
