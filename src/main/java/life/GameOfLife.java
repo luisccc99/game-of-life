@@ -1,5 +1,5 @@
 package life;
-// TODO: evolve first generation for NUM_GENERATIONS times and display each generation
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
@@ -9,14 +9,14 @@ import static life.Grid.N;
 
 public class GameOfLife extends JFrame {
 
-    public static int NUM_GENERATIONS = 10;
+    public static int NUM_GENERATIONS = 100;
     public JLabel generationLabel;
     public JLabel aliveLabel;
+    private GridCanvas gridPanel;
     public Grid gameGrid;
 
     public GameOfLife() {
-        gameGrid = new Grid();
-        gameGrid.buildGrid();
+        super("Game of Life");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 300);
         setLocationRelativeTo(null);
@@ -36,53 +36,55 @@ public class GameOfLife extends JFrame {
         aliveLabel.setName("AliveLabel");
         textPanel.add(aliveLabel);
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        JPanel gridPanel = new GridCanvas(gameGrid.getCurrent());
-        updateCounters(gameGrid.getGeneration(), gameGrid.getLiveCells());
+        gridPanel = new GridCanvas();
         mainPanel.add(textPanel, BorderLayout.NORTH);
         mainPanel.add(gridPanel, BorderLayout.CENTER);
         add(mainPanel);
     }
 
+    public void setGameGrid(Grid gameGrid) {
+        this.gameGrid = gameGrid;
+    }
+
     private class GridCanvas extends JPanel {
 
-        public GridCanvas(Cell[][] cells) {
+        public GridCanvas() {
             setLayout(new GridLayout(N, N));
-            GridBagConstraints gbc = new GridBagConstraints();
+        }
 
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            removeAll();
             for (int row = 0; row < N; row++) {
                 for (int col = 0; col < N; col++) {
-                    gbc.gridx = col;
-                    gbc.gridy = row;
                     JPanel cell = new JPanel();
                     Border border;
                     if (row < (N - 1)) {
                         if (col < (N - 1)) {
-                            border = new MatteBorder(1, 1, 0, 0, Color.gray);
+                            border = new MatteBorder(1, 1, 0, 0, Color.darkGray);
                         } else {
-                            border = new MatteBorder(1, 1, 0, 1, Color.gray);
+                            border = new MatteBorder(1, 1, 0, 1, Color.darkGray);
                         }
                     } else {
                         if (col < (N - 1)) {
-                            border = new MatteBorder(1, 1, 1, 0, Color.gray);
+                            border = new MatteBorder(1, 1, 1, 0, Color.darkGray);
                         } else {
-                            border = new MatteBorder(1, 1, 1, 1, Color.gray);
+                            border = new MatteBorder(1, 1, 1, 1, Color.darkGray);
                         }
                     }
-                    if (cells[row][col].isAlive()) {
+                    if (gameGrid.getCurrent()[row][col].isAlive()) {
                         cell.setBackground(Color.darkGray);
                     }
                     cell.setBorder(border);
-                    add(cell, gbc);
+                    add(cell);
                 }
             }
         }
     }
 
     public void updateGrid() {
-        /*
-
-         */
-
+        gridPanel.repaint();
     }
 
     public void updateCounters(int generation, int liveCells) {
@@ -91,11 +93,28 @@ public class GameOfLife extends JFrame {
     }
 
     public static void main(String[] args) {
-        GameOfLife game = new GameOfLife();
-        /*
-            - create thread for logic (build initial grid,
-             get next generations, etc)
-            -
-         */
+        Thread game = new Thread(() -> {
+            Grid grid = new Grid();
+            grid.buildGrid();
+            GameOfLife life = new GameOfLife();
+            life.updateGrid();
+            life.setGameGrid(grid);
+            for (int i = 0; i < NUM_GENERATIONS; i++) {
+                life.updateGrid();
+                life.updateCounters(i + 1, grid.getLiveCells());
+                grid.nextGeneration();
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        game.start();
+        try {
+            game.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

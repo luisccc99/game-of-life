@@ -10,7 +10,6 @@ public class Grid {
     private final Random random;
     public static final int N = 20;
     private int liveCells = 0;
-    private int generation = 1;
 
     public Grid() {
         random = new Random(System.currentTimeMillis());
@@ -188,10 +187,6 @@ public class Grid {
             }
         }
         return liveCells;
-    }
-
-    public int getGeneration() {
-        return generation;
     }
 
     public Cell[][] getCurrent() {
